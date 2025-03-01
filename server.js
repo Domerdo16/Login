@@ -30,7 +30,7 @@ app.post("/login", async (req, res) => {
     if (user) {
       res.json(user)
     } else {
-      res.sendStatus(400)
+      res.status(401).sendFile(path.join(__dirname, "./public/401.html"))
     }
   }  
 })
