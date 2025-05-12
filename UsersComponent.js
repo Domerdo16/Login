@@ -43,6 +43,15 @@ class UsersComponent {
       return null
     }
   }
+
+  async updatePassword(email, newPassword) {
+  const user = this.getUser(email)
+  if (user) {
+    const hashedPassword = await bcrypt.hash(newPassword, 10)
+    user.hash = hashedPassword
+    this.serialize()
+  }
+}
 }
 
 module.exports = UsersComponent

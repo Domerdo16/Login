@@ -1,18 +1,24 @@
 <!DOCTYPE html>
-<html lang="it">  
+<html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <title>Login</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+  <title>Login</title>
 </head>
 <body>
   <div class="container">
     <h1>Login</h1>
-    <form action="login" method="post">
-      <input type="email" name="email" placeholder="Email" required="required" />
-      <input type="password" name="password" placeholder="Password" required="required" />
+    <form action="/login" method="POST">
+      <input type="email" name="email" placeholder="Email" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <p><a href="/forgot-password">Hai dimenticato la password?</a></p> <br>
       <button type="submit">Accedi</button>
     </form>
-    <p>Non sei ancora registrato? <a href="signup">Registrati</a></p>
+    <p class="signup-link">
+    </br>
+      Non sei registrato? <a href="/signup">Registrati</a>
+    </p>
   </div>
+</body>
 </html>
