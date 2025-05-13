@@ -25,7 +25,8 @@ class UsersComponent {
     const hash = await bcrypt.hash(password, 10)
     this.users[email] = {
       email,
-      hash
+      hash,
+      isVerified: false
     }
 
     this.serialize()
@@ -51,7 +52,20 @@ class UsersComponent {
     user.hash = hashedPassword
     this.serialize()
   }
-}
+  }
+  
+  verifyUser(email) {
+  const user = this.getUser(email)
+  if (user) {
+    user.isVerified = true
+    this.serialize()
+  }
+  }
+
+  isUserVerified(email) {
+  const user = this.getUser(email);
+  return user ? user.isVerified : false
+  }
 }
 
 module.exports = UsersComponent

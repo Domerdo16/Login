@@ -78,18 +78,16 @@ app.post("/login", async (req, res) => {
 
   const user = usersComponent.getUser(email)
 
-  if (!user) {
-    return res.status(401).sendFile(path.join(__dirname, "./public/email-not-registered.html"))
-  }
+  if (user && await usersComponent.login(email, password)) {
+    if (!usersComponent.isUserVerified(email)) {
+      return res.redirect("/login?error=Email non verificata. Controlla la tua email per il link di verifica.")
+    }
 
-  const isPasswordValid = await usersComponent.login(email, password)
-
-  if (isPasswordValid) {
     const token = jwt.sign({ email: user.email }, SECRET_KEY, { expiresIn: "1h" })
     res.cookie("token", token, { httpOnly: true })
     res.redirect("/")
   } else {
-    res.status(401).sendFile(path.join(__dirname, "./public/incorrect-password.html"))
+    res.redirect("/login?error=Email o password errate")
   }
 })
 
@@ -181,18 +179,69 @@ app.get("/signup", (req, res) => {
 })
 
 app.post("/signup", async (req, res) => {
-  const email = req.body.email;
-  const password = req.body.password;
+  const email = req.body.email
+  const password = req.body.password
 
   if (usersComponent.getUser(email)) {
-    return res.redirect("/signup?error=email_in_use");
+    return res.redirect("/signup?error=Email già registrata.")
   } else {
-    await usersComponent.create(email, password)
-    const token = jwt.sign({ email: email }, SECRET_KEY, { expiresIn: "1h" })
-    res.cookie("token", token, { httpOnly: true });
-    res.redirect("/");
+    const verificationToken = jwt.sign({ email: email }, SECRET_KEY, { expiresIn: "1h" })
+    const verificationLink = `http://${localIP}:${PORT}/verify-email?token=${verificationToken}`
+
+    const mailOptions = {
+      from: "panepene14@gmail.com",
+      to: email,
+      subject: "Verifica il tuo account",
+      html: `
+        <h1>Verifica il tuo account</h1>
+        <p>Clicca sul link qui sotto per verificare il tuo account:</p>
+        <a href="${verificationLink}">Verifica il tuo account</a>
+        <p>Il link scadrà in 1 ora.</p>
+      `
+    }
+
+    transporter.sendMail(mailOptions, async (error, info) => {
+      if (error) {
+        console.error("Errore nell'invio dell'email di verifica:", error)
+        res.status(500).send("Errore nell'invio dell'email di verifica.")
+      } else {
+        console.log("Email di verifica inviata con successo:", info.response)
+        await usersComponent.create(email, password)
+        res.sendFile(path.join(__dirname, "./public/check-email.html"))
+      }
+    })
   }
-});
+})
+
+
+
+app.get("/verify-email", async (req, res) => {
+  const token = req.query.token
+
+  jwt.verify(token, SECRET_KEY, async (err, decoded) => {
+    if (err) {
+      console.error("Errore nella verifica del token:", err.message)
+      return res.sendFile(path.join(__dirname, "./public/invalid-link.html"))
+    }
+
+    const email = decoded.email
+    console.log("Email verificata:", email)
+
+    const user = usersComponent.getUser(email)
+
+    if (user && user.isVerified) {
+      return res.sendFile(path.join(__dirname, "./public/email-already-verified.html"))
+    }
+
+    try {
+      usersComponent.verifyUser(email)
+      res.sendFile(path.join(__dirname, "./public/email-verified.html"))
+    } catch (updateError) {
+      console.error("Errore durante la verifica dell'email:", updateError)
+      res.status(500).send("Errore durante la verifica dell'email.")
+    }
+  })
+})
 
 
 

@@ -16,18 +16,30 @@
 
       if (password !== confirmPassword) {
         errorMessage.textContent = "Le password non corrispondono. Riprova.";
-        return false; // Impedisce l'invio del form
+        return false;
       }
 
-      return true; // Permette l'invio del form
+      return true;
     }
+
+    // Mostra il messaggio di errore se presente nella query string
+    window.onload = () => {
+      const params = new URLSearchParams(window.location.search);
+      const error = params.get("error");
+      if (error) {
+        const errorMessage = document.getElementById("error-message");
+        errorMessage.textContent = error;
+        errorMessage.style.display = "block";
+      }
+    };
   </script>
 </head>
 <body>
   <div class="container">
-    <h1>Registrati</h1>
+    <h1>Signup</h1>
     <form action="/signup" method="POST" onsubmit="return validateForm()">
-      <div id="error-message" class="error-message"></div>
+      <!-- Messaggio di errore -->
+      <div id="error-message" class="error-message" style="color: red;"></div>
       <div class="form-group">
         <input 
           type="email" 
