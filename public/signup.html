@@ -11,7 +11,6 @@
       const confirmPassword = document.getElementById("confirmPassword").value;
       const errorMessage = document.getElementById("error-message");
 
-      // Resetta il messaggio di errore
       errorMessage.textContent = "";
 
       if (password !== confirmPassword) {
@@ -22,7 +21,6 @@
       return true;
     }
 
-    // Mostra il messaggio di errore se presente nella query string
     window.onload = () => {
       const params = new URLSearchParams(window.location.search);
       const error = params.get("error");
@@ -38,7 +36,6 @@
   <div class="container">
     <h1>Signup</h1>
     <form action="/signup" method="POST" onsubmit="return validateForm()">
-      <!-- Messaggio di errore -->
       <div id="error-message" class="error-message" style="color: red;"></div>
       <div class="form-group">
         <input 

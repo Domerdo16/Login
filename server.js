@@ -32,7 +32,7 @@ function getLocalIPAddress() {
       }
     }
   }
-  return "localhost"; // Fallback su localhost
+  return "localhost";
 }
 const localIP = getLocalIPAddress()
 
@@ -87,7 +87,7 @@ app.post("/login", async (req, res) => {
     res.cookie("token", token, { httpOnly: true })
     res.redirect("/")
   } else {
-    res.redirect("/login?error=Email o password errate")
+    res.redirect("/login?error=Email o password errate.")
   }
 })
 
@@ -225,8 +225,6 @@ app.get("/verify-email", async (req, res) => {
     }
 
     const email = decoded.email
-    console.log("Email verificata:", email)
-
     const user = usersComponent.getUser(email)
 
     if (user && user.isVerified) {
@@ -235,6 +233,7 @@ app.get("/verify-email", async (req, res) => {
 
     try {
       usersComponent.verifyUser(email)
+      console.log("Email verificata:", email)
       res.sendFile(path.join(__dirname, "./public/email-verified.html"))
     } catch (updateError) {
       console.error("Errore durante la verifica dell'email:", updateError)
