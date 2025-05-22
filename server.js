@@ -109,7 +109,7 @@ app.post("/forgot-password", async (req, res) => {
   const resetLink = `http://${localIP}:${PORT}/reset-password?token=${resetToken}`
 
   const mailOptions = {
-    from: "panepene14@gmail.com",
+    from: process.env.EMAIL_USER,
     to: email,
     subject: "Recupero Password",
     html: `
@@ -189,7 +189,7 @@ app.post("/signup", async (req, res) => {
     const verificationLink = `http://${localIP}:${PORT}/verify-email?token=${verificationToken}`
 
     const mailOptions = {
-      from: "panepene14@gmail.com",
+      from: process.env.EMAIL_USER,
       to: email,
       subject: "Verifica il tuo account",
       html: `
