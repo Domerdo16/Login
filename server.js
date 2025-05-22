@@ -123,7 +123,7 @@ app.post("/forgot-password", async (req, res) => {
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
       console.error("Errore nell'invio dell'email:", error)
-      res.status(500).send("Errore nell'invio dell'email.")
+      res.sendFile(path.join(__dirname, "./public/email-error.html"))
     } else {
       console.log("Email inviata con successo:", info.response)
       res.sendFile(path.join(__dirname, "./public/check-email.html"))
@@ -203,7 +203,7 @@ app.post("/signup", async (req, res) => {
     transporter.sendMail(mailOptions, async (error, info) => {
       if (error) {
         console.error("Errore nell'invio dell'email di verifica:", error)
-        res.status(500).send("Errore nell'invio dell'email di verifica.")
+        res.sendFile(path.join(__dirname, "./public/email-error.html"))
       } else {
         console.log("Email di verifica inviata con successo:", info.response)
         await usersComponent.create(email, password)
@@ -237,7 +237,7 @@ app.get("/verify-email", async (req, res) => {
       res.sendFile(path.join(__dirname, "./public/email-verified.html"))
     } catch (updateError) {
       console.error("Errore durante la verifica dell'email:", updateError)
-      res.status(500).send("Errore durante la verifica dell'email.")
+      res.sendFile(path.join(__dirname, "./public/email-verification-error.html"))
     }
   })
 })
